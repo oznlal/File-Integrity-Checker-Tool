@@ -2,7 +2,7 @@
 
 ## Description
 
-The **File Integrity Checker Tool** is a Python-based utility that helps in monitoring and ensuring the integrity of files by checking their hash values. It calculates the hash of monitored files and stores them in a local JSON database. When a file is modified, the tool compares the file’s current hash with the previously stored hash and sends a pop-up notification if any modification is detected.
+The **File Integrity Checker Tool** is a **Python-based** utility that helps in monitoring and ensuring the integrity of files by checking their hash values. It calculates the hash of monitored files and stores them in a local JSON database. When a file is modified, the tool compares the file’s current hash with the previously stored hash and sends a pop-up notification if any modification is detected.
 
 This tool can be used to track changes in files, especially for use cases where file integrity is critical (e.g., configuration files, logs, or code files). It also provides the ability to manually update file hashes and remove files from the monitoring database.
 
