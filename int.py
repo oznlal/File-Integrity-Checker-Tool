@@ -27,17 +27,13 @@ def calculate_file_hash(filepath):
         print(f"File not found: {filepath}")
         return None
 
-# Display multiple pop-up notifications using Tkinter
-def show_notifications(filepath):
-    root1 = Tk()
-    root1.withdraw()  # Hide the root window
+# Show a pop-up notification for a modified file
+def show_notification(filepath):
+    # Create a single Tkinter window for the notification
+    root = Tk()
+    root.withdraw()  # Hide the root window
     messagebox.showinfo("File Integrity Alert", f"File modified: {filepath}")
-    root1.destroy()  # Close the Tkinter instance
-
-    root2 = Tk()
-    root2.withdraw()  # Hide the second root window
-    messagebox.showinfo("File Integrity Alert", f"Another alert for {filepath}")
-    root2.destroy()  # Close the second Tkinter instance
+    root.destroy()  # Close the Tkinter instance after the message is displayed
 
 # Check the integrity of files in the database and show notifications on change
 def check_file_integrity(database):
@@ -48,13 +44,13 @@ def check_file_integrity(database):
         if current_hash is None:
             continue  # Skip if the file is not found
 
-        # Show notifications until the hash matches the stored hash
-        while current_hash != last_saved_hash:
-            print(f"Change detected in {filepath}. Showing notifications.")
-            show_notifications(filepath)  # Show multiple notifications
-            time.sleep(60)  # Wait 1 minute before showing notifications again
+        # Check if the hash has changed and show a notification for each modified file
+        if current_hash != last_saved_hash:
+            print(f"Change detected in {filepath}. Showing notification.")
+            show_notification(filepath)  # Show a notification for the modified file
+            time.sleep(60)  # Wait 1 minute before checking again
             current_hash = calculate_file_hash(filepath)  # Recalculate hash
-        
+
         # Update the hash in the database if it has changed
         if current_hash != entries[-1]["hash"]:
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -83,4 +79,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
