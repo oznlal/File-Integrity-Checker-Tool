@@ -1,4 +1,4 @@
-# File Integrity Checker Tool
+<h1 align="center">File Integrity Checker Tool</h1>
 
 ## Description
 
