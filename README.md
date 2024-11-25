@@ -36,116 +36,111 @@ def save_database(database):
         json.dump(database, f, indent=4)
 ```
 
-### 2. **File Hash Calculation**:
-The tool calculates the hash of files using the MD5 algorithm. This is done to detect any changes in the file content.
+```markdown
+<h1 align="center">File Integrity Checker Tool</h1>
 
-```python
-def calculate_file_hash(filepath):
-    hash_md5 = hashlib.md5()
-    try:
-        with open(filepath, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                hash_md5.update(chunk)
-        return hash_md5.hexdigest()
-    except FileNotFoundError:
-        print(f"File not found: {filepath}")
-        return None
-```
+## Description
 
-### 3. **File Integrity Check**:
-This function compares the current hash of each file with its stored hash in the database. If a mismatch is found, it triggers a pop-up notification.
+The **File Integrity Checker Tool** is a Python-based utility that helps ensure the integrity of files by continuously monitoring their hash values. It detects unauthorized or accidental modifications to files and notifies users through sequential pop-up alerts. The tool also provides an interactive interface for managing monitored files, allowing users to add, remove, or update file hashes as needed.
+
+### Key Features:
+- **File Hash Monitoring**: Continuously monitors specified files for any modifications.
+- **Pop-up Notifications**: Alerts users about file changes with pop-ups for each modified file (with a 5-second delay between notifications).
+- **Interactive File Management**: Add, remove, or update monitored files via a CLI interface.
+- **JSON-Based Database**: Stores file paths, hashes, and timestamps for tracking integrity over time.
+- **Customizable**: Easily adjust monitoring intervals and notification delays.
+
+---
+
+## Main Code Parts
+
+### 1. File Monitoring (`int.py`)
+
+This script monitors the integrity of files and alerts users about changes.
 
 ```python
 def check_file_integrity(database):
     for filepath, entries in database.items():
-        last_saved_hash = entries[-1]["hash"]  # Get the last saved hash
+        last_saved_hash = entries[-1]["hash"]
         current_hash = calculate_file_hash(filepath)
-
         if current_hash is None:
-            continue  # Skip if the file is not found
-
+            continue
         if current_hash != last_saved_hash:
-            print(f"Change detected in {filepath}. Showing notification.")
-            show_notification(filepath)  # Show a notification for the modified file
-            time.sleep(60)  # Wait 1 minute before checking again
-            current_hash = calculate_file_hash(filepath)  # Recalculate hash
-
-        # Update the hash in the database if it has changed
-        if current_hash != entries[-1]["hash"]:
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            new_entry = {"hash": current_hash, "timestamp": timestamp}
-            database[filepath].append(new_entry)
-            print(f"Updated hash for {filepath} in database.")
+            show_notification(filepath)
+            time.sleep(5)  # Delay between notifications
+            update_file_hash(filepath, current_hash, database)
 ```
 
-### 4. **Notification System**:
-When a file modification is detected, the tool displays a pop-up notification using Tkinter. This is done for each modified file.
+- **Functionality**: Monitors files for changes, notifies users, and updates the database with new hashes.
+- **Customizable Delay**: Pop-ups appear for each modified file with a 5-second delay.
+
+### 2. File Management (`file.py`)
+
+This script provides a command-line interface for managing monitored files.
+
+```python
+def add_file(filepath, database):
+    if os.path.exists(filepath):
+        file_hash = calculate_file_hash(filepath)
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        database[filepath] = [{"hash": file_hash, "timestamp": current_time}]
+        print(f"File {filepath} added to monitoring list.")
+    else:
+        print(f"File {filepath} does not exist.")
+```
+
+- **Add Files**: Users can add files to the monitoring list.
+- **Update Hashes**: Users can manually save new hashes for monitored files.
+
+### 3. Notification System
 
 ```python
 def show_notification(filepath):
     root = Tk()
-    root.withdraw()  # Hide the root window
+    root.withdraw()
     messagebox.showinfo("File Integrity Alert", f"File modified: {filepath}")
-    root.destroy()  # Close the Tkinter instance after the message is displayed
+    root.destroy()
 ```
 
-### 5. **Main Loop**:
-The main loop continuously monitors files in the database for modifications, checks their integrity, and updates the database with the new hashes.
-
-```python
-def main():
-    database = load_database()
-    if not database:
-        print("No files to monitor.")
-        return
-
-    try:
-        while True:
-            print("Monitoring files...")  # Message to show monitoring is active
-            check_file_integrity(database)
-            save_database(database)
-            time.sleep(30)  # Wait for 30 seconds before the next check
-    except KeyboardInterrupt:
-        print("Monitoring stopped.")
-```
+- **GUI Alerts**: Displays pop-ups for file modifications.
+- **Sequential Alerts**: Ensures all modified files are notified with a 5-second gap.
 
 ---
 
-## How to Use:
+## Usage
 
-### Prerequisites:
-- Python 3.x
-- Tkinter (for pop-up notifications)
+1. **Add Files to Monitor**:
+   Run `file.py` to add files to the monitoring database:
+   ```bash
+   python file.py
+   ```
 
-### Installation:
+2. **Start Monitoring**:
+   Run `int.py` to monitor files and receive alerts for modifications:
+   ```bash
+   python int.py
+   ```
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/file-integrity-checker.git
-    cd file-integrity-checker
-    ```
-
-2. Install dependencies (if required):
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Ensure the `hash_database.json` file exists, or the program will create it on its own.
-
-### Running the Program:
-
-- **Add files to monitor**:
-  Run the script in interactive mode to add files to the monitoring list.
-  
-- **Monitor file integrity**:
-  Start the program to continuously check for file integrity and display notifications for any file modifications.
-  
-    ```bash
-    python int.py
-    ```
+3. **Pop-Up Alerts**:
+   If any file is modified, pop-up notifications will appear sequentially for each affected file.
 
 ---
 
-## License:
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Customization
+
+- **Adjust Monitoring Interval**: Change `time.sleep(30)` in `int.py` for the interval between scans.
+- **Change Notification Gap**: Modify `time.sleep(5)` in `int.py` to adjust the delay between notifications.
+
+---
+
+## Contributing
+
+Feel free to fork this repository, open issues, or submit pull requests for improvements!
+
+## License
+
+This project is licensed under the MIT License.
+```
+
+This version provides an easy-to-follow explanation of the tool's functionality, key code snippets, and usage, making it suitable for your GitHub repository.
 
