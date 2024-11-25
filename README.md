@@ -1,7 +1,3 @@
-Here’s a description for your **File Integrity Checker Tool** with the main code parts highlighted, which you can use for your GitHub repository `README.md`:
-
----
-
 # File Integrity Checker Tool
 
 ## Description
@@ -153,6 +149,3 @@ def main():
 ## License:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
-You can paste this description in your `README.md` file to give others a clear overview of the tool and its functionality. If you want to modify the formatting or add more details, feel free to adjust as needed!
