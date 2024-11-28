@@ -106,3 +106,5 @@ This project is licensed under the MIT License.
 
 This version provides an easy-to-follow explanation of the tool's functionality, key code snippets, and usage, making it suitable for your GitHub repository.
 
+---
+
